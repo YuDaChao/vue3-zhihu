@@ -1,47 +1,46 @@
 <template>
-  <div class="app">
-    <reactive-comp />
-    <lifecycle-comp />
-    <teleport-comp :visible="visible" @close="onModalClose" />
-    <button @click="openModal">打开</button>
-    <Suspense>
-      <template #default>
-        <async-comp />
-      </template>
-      <template #fallback>
-        <h1>loading...</h1>
-      </template>
-    </Suspense>
+  <div class="app container">
+    <column-list :list="list" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import ReactiveComp from '@/components/reactive-comp.vue'
-import LifecycleComp from '@/components/lifecycle-comp.vue'
-import TeleportComp from '@/components/teleport-comp.vue'
-import AsyncComp from '@/components/async-comp.vue'
+import { defineComponent } from 'vue'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import ColumnList, { ColumnProps } from '@/components/column-list.vue'
 export default defineComponent({
   name: 'App',
   components: {
-    ReactiveComp,
-    LifecycleComp,
-    TeleportComp,
-    AsyncComp
+    ColumnList
   },
   setup () {
-    const visible = ref(false)
-    const onModalClose = () => {
-      console.log('modal close')
-      visible.value = false
-    }
-    const openModal = () => {
-      visible.value = true
-    }
+    const list: ColumnProps[] = [
+      {
+        id: 1,
+        title: '测试数据',
+        avatar: 'https://cdn4.buysellads.net/uu/1/63492/1592582861-Custom_Vendors_260x200_V2.png',
+        description: '这是一段测试数据'
+      },
+      {
+        id: 2,
+        title: '测试数据',
+        avatar: 'https://cdn4.buysellads.net/uu/1/63492/1592582861-Custom_Vendors_260x200_V2.png',
+        description: '这是一段测试数据'
+      },
+      {
+        id: 3,
+        title: '测试数据',
+        avatar: 'https://cdn4.buysellads.net/uu/1/63492/1592582861-Custom_Vendors_260x200_V2.png',
+        description: '这是一段测试数据'
+      },
+      {
+        id: 4,
+        title: '测试数据',
+        description: '这是一段测试数据'
+      }
+    ]
     return {
-      onModalClose,
-      openModal,
-      visible
+      list
     }
   }
 })
