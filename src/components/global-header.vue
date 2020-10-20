@@ -1,5 +1,7 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 justify-content-between">
+  <nav
+    class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 justify-content-between"
+  >
     <a class="navbar-brand" href="#">Vue3 知乎</a>
     <ul v-if="!user.isLogin" class="list-inline mb-0">
       <li class="list-inline-item">
@@ -20,9 +22,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 export interface UserProps {
-  isLogin: boolean;
-  name?: string;
-  id?: string;
+  isLogin: boolean
+  name?: string
+  id?: string
 }
 export default defineComponent({
   name: 'global-header',
