@@ -2,10 +2,11 @@
   <div class="form-group">
     <label>{{label}}</label>
     <input
-      v-model="inputRef.value"
+      :value="inputRef.value"
       :type="type"
       :placeholder="placeholder"
       @blur="validate"
+      @input="onInput"
       class="form-control"
       :class="{'is-invalid': inputRef.error}"
     >
@@ -28,6 +29,7 @@ export type RuleProps = RuleProp[]
 export default defineComponent({
   name: 'validate-input',
   props: {
+    modelValue: String,
     label: {
       type: String
     },
@@ -43,12 +45,17 @@ export default defineComponent({
       type: Array as PropType<RuleProps>
     }
   },
-  setup (props) {
+  setup (props, context) {
     const inputRef = reactive({
-      value: '',
+      value: props.modelValue || '',
       error: false,
       message: ''
     })
+    const onInput = (e: KeyboardEvent) => {
+      const value = (e.target as HTMLInputElement).value
+      inputRef.value = value
+      context.emit('update:modelValue', value)
+    }
     const validate = () => {
       if (props.rules) {
         const valid = props.rules.every((rule: RuleProp) => {
@@ -75,7 +82,8 @@ export default defineComponent({
     }
     return {
       inputRef,
-      validate
+      validate,
+      onInput
     }
   }
 })
