@@ -1,6 +1,7 @@
 <template>
   <div class="app container">
     <global-header :user="currentUser" />
+    <form-comp />
     <column-list :list="list" />
   </div>
 </template>
@@ -10,11 +11,13 @@ import { defineComponent } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from '@/components/column-list.vue'
 import GlobalHeader, { UserProps } from '@/components/global-header.vue'
+import FormComp from '@/components/form-comp.vue'
 export default defineComponent({
   name: 'App',
   components: {
     ColumnList,
-    GlobalHeader
+    GlobalHeader,
+    FormComp
   },
   setup () {
     const list: ColumnProps[] = [
