@@ -3,12 +3,11 @@
     <label>{{label}}</label>
     <input
       :value="inputRef.value"
-      :type="type"
-      :placeholder="placeholder"
       @blur="validate"
       @input="onInput"
       class="form-control"
       :class="{'is-invalid': inputRef.error}"
+      v-bind="$attrs"
     >
     <div v-show="inputRef.error" class="invalid-feedback">
       {{ inputRef.message }}
@@ -16,37 +15,40 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, reactive } from 'vue'
+import { defineComponent, PropType, reactive, onMounted } from 'vue'
 import {
   EmailReg,
   NumberReg
 } from '@/utils'
+import { EmitterType, emitter } from './validate-form.vue'
 interface RuleProp {
   type: 'required' | 'email' | 'number',
   message: string
 }
 export type RuleProps = RuleProp[]
+export interface InputRef {
+  value: string
+  error: boolean
+  message: string
+}
+export interface ValidateResult {
+  valid: boolean,
+  errors?: InputRef
+}
 export default defineComponent({
   name: 'validate-input',
+  inheritAttrs: false,
   props: {
     modelValue: String,
     label: {
       type: String
-    },
-    type: {
-      type: String,
-      default: 'text'
-    },
-    placeholder: {
-      type: String,
-      default: ''
     },
     rules: {
       type: Array as PropType<RuleProps>
     }
   },
   setup (props, context) {
-    const inputRef = reactive({
+    const inputRef: InputRef = reactive({
       value: props.modelValue || '',
       error: false,
       message: ''
@@ -56,30 +58,42 @@ export default defineComponent({
       inputRef.value = value
       context.emit('update:modelValue', value)
     }
-    const validate = () => {
-      if (props.rules) {
-        const valid = props.rules.every((rule: RuleProp) => {
-          inputRef.message = rule.message
-          let passed = false
-          switch (rule.type) {
-            case 'required':
-              passed = inputRef.value.trim() !== ''
-              break
-            case 'email':
-              passed = EmailReg.test(inputRef.value)
-              break
-            case 'number':
-              passed = NumberReg.test(inputRef.value)
-              break
-            default:
-              break
-          }
-          return passed
-        })
-        inputRef.error = !valid
-        console.log(valid, inputRef.message, inputRef.error)
-      }
+    // 验证
+    const validate = (): Promise<ValidateResult> => {
+      return new Promise<ValidateResult>((resolve, reject) => {
+        const result: ValidateResult = {
+          valid: false,
+          errors: inputRef
+        }
+        if (props.rules) {
+          const valid = props.rules.every((rule: RuleProp) => {
+            inputRef.message = rule.message
+            let passed = false
+            switch (rule.type) {
+              case 'required':
+                passed = inputRef.value.trim() !== ''
+                break
+              case 'email':
+                passed = EmailReg.test(inputRef.value)
+                break
+              case 'number':
+                passed = NumberReg.test(inputRef.value)
+                break
+              default:
+                break
+            }
+            return passed
+          })
+          inputRef.error = !valid
+          result.valid = valid
+          valid ? resolve(result) : reject(result)
+        }
+        resolve(result)
+      })
     }
+    onMounted(() => {
+      emitter.emit(EmitterType, validate)
+    })
     return {
       inputRef,
       validate,
