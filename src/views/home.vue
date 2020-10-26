@@ -1,7 +1,6 @@
 <template>
-  <div class="container">
-    <global-header :user="currentUser" />
-    <router-view></router-view>
+  <div class="home">
+    <column-list :list="list" />
   </div>
 </template>
 
@@ -9,19 +8,19 @@
 import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { UserProps } from '@/components/global-header/src/props'
-import { GlobalHeader } from '@/components/global-header'
+import { ColumnProps } from '@/components/column/src/props'
+import { ColumnList } from '@/components/column'
 import { GlobalDataProp } from '@/store/types'
 export default defineComponent({
-  name: 'App',
+  name: 'Home',
   components: {
-    GlobalHeader
+    ColumnList
   },
-  setup() {
+  setup () {
     const store = useStore<GlobalDataProp>()
-    const currentUser: UserProps = store.state.user
+    const list: ColumnProps[] = store.state.columns
     return {
-      currentUser
+      list
     }
   }
 })

@@ -15,6 +15,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     '@typescript-eslint/no-var-requires': 0,
-    '@typescript-eslint/member-delimiter-style': 0
+    '@typescript-eslint/member-delimiter-style': 0,
+    'space-before-function-paren': 0
   }
 }
